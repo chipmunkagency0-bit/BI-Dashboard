@@ -1503,15 +1503,15 @@ function Page04_MatrixGrading({ storeData, filters }) {
 
   // ── Matrix insight + priority ───────────────────────────────────────────────
   function getInsight(p) {
-    const highSales  = p.salesVal >= salesMedian;
+    const highSales = p.salesVal >= salesMedian;
     const highMargin = p.marginPct != null ? p.marginPct >= marginThresh : false;
-    const highAVB    = p.avgBillVal >= overallABV;
-    if (highSales && highMargin && highAVB)  return { insight: "Top-tier performer — maintain stock",         priority: "🟢 Low" };
-    if (highSales && highMargin && !highAVB) return { insight: "High-profit driver — explore bundling",       priority: "🟢 Low" };
-    if (highSales && !highMargin)            return { insight: "Volume driver — improve margin",              priority: "🟠 Medium" };
-    if (!highSales && highMargin)            return { insight: "Underexposed gem — targeted marketing",       priority: "🟠 Medium" };
-    if (!highSales && !highMargin && highAVB) return { insight: "High-value inefficient — reassess",         priority: "🔴 Critical" };
-    return                                          { insight: "Low-impact — consider clearance",            priority: "🔴 Critical" };
+    const highAVB = p.avgBillVal >= overallABV;
+    if (highSales && highMargin && highAVB) return { insight: "Top-tier performer — maintain stock", priority: "🟢 Low" };
+    if (highSales && highMargin && !highAVB) return { insight: "High-profit driver — explore bundling", priority: "🟢 Low" };
+    if (highSales && !highMargin) return { insight: "Volume driver — improve margin", priority: "🟠 Medium" };
+    if (!highSales && highMargin) return { insight: "Underexposed gem — targeted marketing", priority: "🟠 Medium" };
+    if (!highSales && !highMargin && highAVB) return { insight: "High-value inefficient — reassess", priority: "🔴 Critical" };
+    return { insight: "Low-impact — consider clearance", priority: "🔴 Critical" };
   }
 
   // ── Grading ─────────────────────────────────────────────────────────────────
@@ -1526,9 +1526,9 @@ function Page04_MatrixGrading({ storeData, filters }) {
   const enriched = products.map(p => {
     const { insight, priority } = getInsight(p);
     const { grade, score } = getGrade(p.salesVal);
-    const highSales  = p.salesVal >= salesMedian;
+    const highSales = p.salesVal >= salesMedian;
     const highMargin = p.marginPct != null ? p.marginPct >= marginThresh : false;
-    const highAVB    = p.avgBillVal >= overallABV;
+    const highAVB = p.avgBillVal >= overallABV;
     return { ...p, insight, priority, grade, score, highSales, highMargin, highAVB };
   });
 
@@ -1653,7 +1653,7 @@ function Page04_MatrixGrading({ storeData, filters }) {
   // ── Priority color ───────────────────────────────────────────────────────────
   function priorityColor(p) {
     if (p === "🔴 Critical") return "#dc2626";
-    if (p === "🟠 Medium")   return "#d97706";
+    if (p === "🟠 Medium") return "#d97706";
     return "#15803d";
   }
 
@@ -1670,13 +1670,13 @@ function Page04_MatrixGrading({ storeData, filters }) {
   const gradeColor = { A: "#10b981", B: "#f59e0b", C: "#ef4444" };
   const scatterData = hasCostData
     ? enriched.filter(p => p.marginPct != null).map(p => ({
-        x: parseFloat(p.marginPct.toFixed(2)),
-        y: Math.round(p.salesVal),
-        z: Math.max(p.stockVal, 1),
-        name: p.product,
-        grade: p.grade,
-        fill: gradeColor[p.grade],
-      }))
+      x: parseFloat(p.marginPct.toFixed(2)),
+      y: Math.round(p.salesVal),
+      z: Math.max(p.stockVal, 1),
+      name: p.product,
+      grade: p.grade,
+      fill: gradeColor[p.grade],
+    }))
     : [];
 
   // ── Donut data ───────────────────────────────────────────────────────────────
@@ -1717,14 +1717,14 @@ function Page04_MatrixGrading({ storeData, filters }) {
     <div>
       {/* KPI cards */}
       <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
-        <KPICard label="Grade A Items"    value={String(gc.A)}
+        <KPICard label="Grade A Items" value={String(gc.A)}
           sub={tot > 0 ? `${(gc.A / tot * 100).toFixed(0)}% of total` : ""} accent="#10b981" />
-        <KPICard label="Grade B Items"    value={String(gc.B)}
+        <KPICard label="Grade B Items" value={String(gc.B)}
           sub={tot > 0 ? `${(gc.B / tot * 100).toFixed(0)}% of total` : ""} accent="#f59e0b" />
-        <KPICard label="Grade C Items"    value={String(gc.C)}
+        <KPICard label="Grade C Items" value={String(gc.C)}
           sub={tot > 0 ? `${(gc.C / tot * 100).toFixed(0)}% of total` : ""} accent="#ef4444" />
-        <KPICard label="Graded Products"  value={String(tot)}  accent="#3b82f6" />
-        <KPICard label="Critical Items"   value={String(criticalCount)}
+        <KPICard label="Graded Products" value={String(tot)} accent="#3b82f6" />
+        <KPICard label="Critical Items" value={String(criticalCount)}
           sub="Low Sales + Low Margin" accent="#ef4444" />
       </div>
 
@@ -1819,7 +1819,7 @@ function Page04_MatrixGrading({ storeData, filters }) {
           <span style={sectionTitle}>Product Matrix Analysis</span>
           <button
             onClick={() => exportCSV("matrix_analysis.csv",
-              ["Product","Section","Sales ₹","Margin %","STR","Avg Bill ₹","Sales","Margin","AVB","Insight","Priority"],
+              ["Product", "Section", "Sales ₹", "Margin %", "STR", "Avg Bill ₹", "Sales", "Margin", "AVB", "Insight", "Priority"],
               t1Sorted.map(r => [
                 r.product, r.section, Math.round(r.salesVal),
                 r.marginPct != null ? r.marginPct.toFixed(1) : "—",
@@ -1843,12 +1843,12 @@ function Page04_MatrixGrading({ storeData, filters }) {
             <thead>
               <tr>
                 {[
-                  ["product","Product","left"], ["section","Section","left"],
-                  ["salesVal","Sales ₹","right"], ["marginPct","Margin %","right"],
-                  ["str","STR","right"], ["avgBillVal","Avg Bill ₹","right"],
-                  ["highSales","Sales","center"], ["highMargin","Margin","center"],
-                  ["highAVB","AVB","center"], ["insight","Insight","left"],
-                  ["priority","Priority","left"],
+                  ["product", "Product", "left"], ["section", "Section", "left"],
+                  ["salesVal", "Sales ₹", "right"], ["marginPct", "Margin %", "right"],
+                  ["str", "STR", "right"], ["avgBillVal", "Avg Bill ₹", "right"],
+                  ["highSales", "Sales", "center"], ["highMargin", "Margin", "center"],
+                  ["highAVB", "AVB", "center"], ["insight", "Insight", "left"],
+                  ["priority", "Priority", "left"],
                 ].map(([key, label, align]) => (
                   <th key={key} style={TH(align)} onClick={() => t1Toggle(key)}>
                     {label}{t1Arrow(key)}
@@ -1900,9 +1900,9 @@ function Page04_MatrixGrading({ storeData, filters }) {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
-                  {[["product","Product","left"],["section","Section","left"],
-                    ["salesVal","Total Sales ₹","right"],["score","Score","right"],
-                    ["grade","Grade","center"],
+                  {[["product", "Product", "left"], ["section", "Section", "left"],
+                  ["salesVal", "Total Sales ₹", "right"], ["score", "Score", "right"],
+                  ["grade", "Grade", "center"],
                   ].map(([key, label, align]) => (
                     <th key={key} style={TH(align)} onClick={() => t2Toggle(key)}>
                       {label}{t2Arrow(key)}
@@ -1932,9 +1932,9 @@ function Page04_MatrixGrading({ storeData, filters }) {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
-                  {[["name","Supplier","left"],["totalSales","Total Sales ₹","right"],
-                    ["products","Products","right"],["avgScore","Avg Score","right"],
-                    ["grade","Grade","center"],
+                  {[["name", "Supplier", "left"], ["totalSales", "Total Sales ₹", "right"],
+                  ["products", "Products", "right"], ["avgScore", "Avg Score", "right"],
+                  ["grade", "Grade", "center"],
                   ].map(([key, label, align]) => (
                     <th key={key} style={TH(align)} onClick={() => t3Toggle(key)}>
                       {label}{t3Arrow(key)}
@@ -3988,7 +3988,7 @@ function UploadZone({ label, icon, file, error, warn, isDrag, onFile, onDragChan
         )}
       </div>
       {error && <div style={{ fontSize: "11px", color: "#dc2626" }}>⚠ {error}</div>}
-      {warn  && <div style={{ fontSize: "11px", color: "#d97706" }}>⚠ {warn}</div>}
+      {warn && <div style={{ fontSize: "11px", color: "#d97706" }}>⚠ {warn}</div>}
     </div>
   );
 }
@@ -3997,16 +3997,16 @@ function UploadZone({ label, icon, file, error, warn, isDrag, onFile, onDragChan
 //  DataUploadScreen — file upload + parse + validate before dashboard loads
 // ══════════════════════════════════════════════════════════════════════════════
 function DataUploadScreen({ onLoad, onUseSample }) {
-  const [salesFile, setSalesFile]     = useState(null);
-  const [stockFile, setStockFile]     = useState(null);
-  const [salesError, setSalesError]   = useState("");
-  const [stockError, setStockError]   = useState("");
-  const [salesWarn, setSalesWarn]     = useState("");
-  const [stockWarn, setStockWarn]     = useState("");
+  const [salesFile, setSalesFile] = useState(null);
+  const [stockFile, setStockFile] = useState(null);
+  const [salesError, setSalesError] = useState("");
+  const [stockError, setStockError] = useState("");
+  const [salesWarn, setSalesWarn] = useState("");
+  const [stockWarn, setStockWarn] = useState("");
   const [globalError, setGlobalError] = useState("");
-  const [loading, setLoading]         = useState(false);
-  const [salesDrag, setSalesDrag]     = useState(false);
-  const [stockDrag, setStockDrag]     = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [salesDrag, setSalesDrag] = useState(false);
+  const [stockDrag, setStockDrag] = useState(false);
 
   // ── CSV parser (no external lib) ──────────────────────────────────────────
   function parseCSV(text) {
@@ -4058,21 +4058,38 @@ function DataUploadScreen({ onLoad, onUseSample }) {
 
   // ── Date normaliser ───────────────────────────────────────────────────────
   function normalizeDate(v) {
-    if (!v) return null;
+    if (!v && v !== 0) return null;
+    // Excel serial number (raw number from SheetJS/openpyxl)
+    if (typeof v === "number") {
+      const d = new Date(Date.UTC(1899, 11, 30) + v * 86400000);
+      return d.toISOString().slice(0, 10);
+    }
     const s = String(v).trim();
-    // YYYY-MM-DD
+    if (!s) return null;
+    // Already YYYY-MM-DD
     if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-    // DD/MM/YYYY or DD-MM-YYYY
-    const dmy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-    if (dmy) return `${dmy[3]}-${dmy[2].padStart(2,"0")}-${dmy[1].padStart(2,"0")}`;
-    // MM/DD/YYYY
-    const mdy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (mdy) return `${mdy[3]}-${mdy[1].padStart(2,"0")}-${mdy[2].padStart(2,"0")}`;
-    // Excel serial number
+    // Normalise separators — handles DD.MM.YYYY (dot), DD/MM/YYYY (slash), DD-MM-YYYY (dash)
+    const norm = s.replace(/\./g, "/").replace(/-/g, "/");
+    // DD/MM/YYYY or DD/MM/YY
+    const dmy = norm.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+    if (dmy) {
+      let [, d, m, y] = dmy;
+      if (y.length === 2) y = "20" + y;
+      const di = parseInt(d), mi = parseInt(m);
+      // day > 12 means definitely DD/MM; month > 12 means definitely MM/DD
+      // otherwise default to DD/MM (Indian store format)
+      if (mi > 12) {
+        // must be MM/DD — swap
+        return `${y}-${d.padStart(2, "0")}-${m.padStart(2, "0")}`;
+      }
+      // DD/MM (default for Indian data)
+      return `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+    }
+    // Excel serial number as string
     const n = Number(s);
     if (!isNaN(n) && n > 40000 && n < 60000) {
-      const d = new Date(Date.UTC(1899,11,30) + n * 86400000);
-      return d.toISOString().split("T")[0];
+      const d = new Date(Date.UTC(1899, 11, 30) + n * 86400000);
+      return d.toISOString().slice(0, 10);
     }
     return null;
   }
@@ -4086,33 +4103,33 @@ function DataUploadScreen({ onLoad, onUseSample }) {
 
   // ── Column alias map ──────────────────────────────────────────────────────
   const SALES_ALIASES = {
-    bill_date:     ["bill_date","bill date","billdate","date"],
-    bill_no:       ["bill_no","bill no","billno","invoice","invoice no","invoice_no"],
-    branch:        ["branch"],
-    location:      ["location","loc"],
-    segment:       ["segment","seg"],
-    section:       ["section","category","dept","department"],
-    section_group: ["section_group","section group","sectiongroup","group"],
-    product:       ["product","item","product name","item name","product_name","item_name"],
-    supplier:      ["supplier","vendor","brand"],
-    salesman:      ["salesman","sales person","salesperson","sales_person","staff","employee"],
-    net_qty:       ["net_qty","net qty","qty","quantity","net quantity"],
-    net_amount:    ["net_amount","net amount","amount","sales","sales amount","total","total amount"],
-    cost_price:    ["cost_price","cost price","cost","purchase price","purchase_price","cp"],
-    selling_price: ["selling_price","selling price","price","mrp","sp"],
+    bill_date: ["bill_date", "bill date", "billdate", "date"],
+    bill_no: ["bill_no", "bill no", "billno", "invoice", "invoice no", "invoice_no"],
+    branch: ["branch"],
+    location: ["location", "loc"],
+    segment: ["segment", "seg"],
+    section: ["section", "category", "dept", "department"],
+    section_group: ["section_group", "section group", "sectiongroup", "group"],
+    product: ["product", "item", "product name", "item name", "product_name", "item_name"],
+    supplier: ["supplier", "vendor", "brand"],
+    salesman: ["salesman", "sales person", "salesperson", "sales_person", "staff", "employee"],
+    net_qty: ["net_qty", "net qty", "qty", "quantity", "net quantity"],
+    net_amount: ["net_amount", "net amount", "amount", "sales", "sales amount", "total", "total amount"],
+    cost_price: ["cost_price", "cost price", "cost", "purchase price", "purchase_price", "cp"],
+    selling_price: ["selling_price", "selling price", "price", "mrp", "sp"],
   };
 
   const STOCK_ALIASES = {
-    stock_date:  ["stock_date","stock date","date","as of date"],
-    branch:      ["branch"],
-    location:    ["location","loc"],
-    segment:     ["segment","seg"],
-    section:     ["section","category","dept","department"],
-    product:     ["product","item","product name","item name","product_name","item_name"],
-    supplier:    ["supplier","vendor","brand"],
-    stock_qty:   ["stock_qty","stock qty","qty","quantity","stock quantity"],
-    stock_value: ["stock_value","stock value","value","stock amount","stock_amount"],
-    entry_date:  ["entry_date","entry date","purchase date","purchase_date","received","received date","received_date"],
+    stock_date: ["stock_date", "stock date", "date", "as of date"],
+    branch: ["branch"],
+    location: ["location", "loc"],
+    segment: ["segment", "seg"],
+    section: ["section", "category", "dept", "department"],
+    product: ["product", "item", "product name", "item name", "product_name", "item_name"],
+    supplier: ["supplier", "vendor", "brand"],
+    stock_qty: ["stock_qty", "stock qty", "qty", "quantity", "stock quantity"],
+    stock_value: ["stock_value", "stock value", "value", "stock amount", "stock_amount"],
+    entry_date: ["entry_date", "entry date", "purchase date", "purchase_date", "received", "received date", "received_date"],
   };
 
   function mapColumns(rawRow, aliases) {
@@ -4144,21 +4161,21 @@ function DataUploadScreen({ onLoad, onUseSample }) {
       const m = mapColumns(r, SALES_ALIASES);
       const qty = normalizeNumber(m.net_qty);
       const amt = normalizeNumber(m.net_amount);
-      const sp  = m.selling_price ? normalizeNumber(m.selling_price) : (qty ? amt / qty : 0);
+      const sp = m.selling_price ? normalizeNumber(m.selling_price) : (qty ? amt / qty : 0);
       return {
-        bill_date:     normalizeDate(m.bill_date),
-        bill_no:       m.bill_no || "",
-        branch:        m.branch || "",
-        location:      m.location || "",
-        segment:       m.segment || "",
-        section:       m.section || "",
+        bill_date: normalizeDate(m.bill_date),
+        bill_no: m.bill_no || "",
+        branch: m.branch || "",
+        location: m.location || "",
+        segment: m.segment || "",
+        section: m.section || "",
         section_group: m.section_group || "",
-        product:       m.product || "",
-        supplier:      m.supplier || "",
-        salesman:      m.salesman || "",
-        net_qty:       qty,
-        net_amount:    amt,
-        cost_price:    m.cost_price ? normalizeNumber(m.cost_price) : null,
+        product: m.product || "",
+        supplier: m.supplier || "",
+        salesman: m.salesman || "",
+        net_qty: qty,
+        net_amount: amt,
+        cost_price: m.cost_price ? normalizeNumber(m.cost_price) : null,
         selling_price: sp,
       };
     }).filter(r => r.product || r.net_amount);
@@ -4169,16 +4186,16 @@ function DataUploadScreen({ onLoad, onUseSample }) {
     return rawRows.map(r => {
       const m = mapColumns(r, STOCK_ALIASES);
       return {
-        stock_date:  normalizeDate(m.stock_date),
-        branch:      m.branch || "",
-        location:    m.location || "",
-        segment:     m.segment || "",
-        section:     m.section || "",
-        product:     m.product || "",
-        supplier:    m.supplier || "",
-        stock_qty:   normalizeNumber(m.stock_qty),
+        stock_date: normalizeDate(m.stock_date),
+        branch: m.branch || "",
+        location: m.location || "",
+        segment: m.segment || "",
+        section: m.section || "",
+        product: m.product || "",
+        supplier: m.supplier || "",
+        stock_qty: normalizeNumber(m.stock_qty),
         stock_value: normalizeNumber(m.stock_value),
-        entry_date:  normalizeDate(m.entry_date),
+        entry_date: normalizeDate(m.entry_date) || normalizeDate(m.stock_date) || null,
       };
     }).filter(r => r.product || r.stock_qty);
   }
@@ -4186,7 +4203,7 @@ function DataUploadScreen({ onLoad, onUseSample }) {
   // ── Validate and produce warnings ─────────────────────────────────────────
   function validateSales(rows) {
     if (!rows.length) return { error: "Sales file has no valid data rows.", warning: "" };
-    const missing = ["product","net_qty","net_amount"].filter(f => rows.every(r => !r[f] && r[f] !== 0));
+    const missing = ["product", "net_qty", "net_amount"].filter(f => rows.every(r => !r[f] && r[f] !== 0));
     if (missing.length) return { error: `Sales file is missing required columns: ${missing.join(", ")}.`, warning: "" };
     const noDates = rows.every(r => !r.bill_date);
     return {
@@ -4197,12 +4214,17 @@ function DataUploadScreen({ onLoad, onUseSample }) {
 
   function validateStock(rows) {
     if (!rows.length) return { error: "Stock file has no valid data rows.", warning: "" };
-    const missing = ["product","stock_qty","stock_value"].filter(f => rows.every(r => !r[f] && r[f] !== 0));
+    const missing = ["product", "stock_qty", "stock_value"].filter(f => rows.every(r => !r[f] && r[f] !== 0));
     if (missing.length) return { error: `Stock file is missing required columns: ${missing.join(", ")}.`, warning: "" };
     const noEntry = rows.every(r => !r.entry_date);
+    const usingFallback = !noEntry && rows.some(r => r.entry_date && r.stock_date && r.entry_date === r.stock_date);
     return {
       error: "",
-      warning: noEntry ? "Entry dates missing — stock ageing will be unavailable." : "",
+      warning: noEntry
+        ? "Entry dates missing in stock file — stock ageing unavailable."
+        : usingFallback
+          ? "⚠ entry_date missing — using stock_date as fallback. Stock ageing may be less accurate. Add an entry_date column to your stock file for precise ageing."
+          : "",
     };
   }
 
@@ -4213,10 +4235,10 @@ function DataUploadScreen({ onLoad, onUseSample }) {
       desired_str_by_range: { "0-250": 4, "251-500": 4, "501-1000": 5, "1001+": 5 },
       old_stock_threshold_days: 90,
       grade_rules: { A: { min_score: 80 }, B: { min_score: 60 }, C: { min_score: 0 } },
-      price_ranges: [[0,250],[251,500],[501,1000],[1001,99999]],
+      price_ranges: [[0, 250], [251, 500], [501, 1000], [1001, 99999]],
       report_period: {
         from: dates[0] || null,
-        to:   dates[dates.length - 1] || null,
+        to: dates[dates.length - 1] || null,
       },
     };
   }
@@ -4250,7 +4272,7 @@ function DataUploadScreen({ onLoad, onUseSample }) {
       const stv = validateStock(stock);
       if (sv.error) { setSalesError(sv.error); setLoading(false); return; }
       if (stv.error) { setStockError(stv.error); setLoading(false); return; }
-      if (sv.warning)  setSalesWarn(sv.warning);
+      if (sv.warning) setSalesWarn(sv.warning);
       if (stv.warning) setStockWarn(stv.warning);
       const config = buildConfig(sales);
       onLoad({ sales, stock, config });

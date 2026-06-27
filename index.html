@@ -53,7 +53,7 @@
         `;
 
         // Transpile on the fly with Babel Standalone
-        const compiled = Babel.transform(finalCode, { presets: ['react'] }).code;
+        const compiled = Babel.transform(finalCode, { presets: [['react', { runtime: 'classic' }]] }).code;
         const script = document.createElement('script');
         script.text = compiled;
         document.body.appendChild(script);
