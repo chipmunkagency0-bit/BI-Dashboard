@@ -4058,21 +4058,38 @@ function DataUploadScreen({ onLoad, onUseSample }) {
 
   // ── Date normaliser ───────────────────────────────────────────────────────
   function normalizeDate(v) {
-    if (!v) return null;
+    if (!v && v !== 0) return null;
+    // Excel serial number (raw number from SheetJS/openpyxl)
+    if (typeof v === "number") {
+      const d = new Date(Date.UTC(1899, 11, 30) + v * 86400000);
+      return d.toISOString().slice(0, 10);
+    }
     const s = String(v).trim();
-    // YYYY-MM-DD
+    if (!s) return null;
+    // Already YYYY-MM-DD
     if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-    // DD/MM/YYYY or DD-MM-YYYY
-    const dmy = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-    if (dmy) return `${dmy[3]}-${dmy[2].padStart(2,"0")}-${dmy[1].padStart(2,"0")}`;
-    // MM/DD/YYYY
-    const mdy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (mdy) return `${mdy[3]}-${mdy[1].padStart(2,"0")}-${mdy[2].padStart(2,"0")}`;
-    // Excel serial number
+    // Normalise separators — handles DD.MM.YYYY (dot), DD/MM/YYYY (slash), DD-MM-YYYY (dash)
+    const norm = s.replace(/\./g, "/").replace(/-/g, "/");
+    // DD/MM/YYYY or DD/MM/YY
+    const dmy = norm.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+    if (dmy) {
+      let [, d, m, y] = dmy;
+      if (y.length === 2) y = "20" + y;
+      const di = parseInt(d), mi = parseInt(m);
+      // day > 12 means definitely DD/MM; month > 12 means definitely MM/DD
+      // otherwise default to DD/MM (Indian store format)
+      if (mi > 12) {
+        // must be MM/DD — swap
+        return `${y}-${d.padStart(2,"0")}-${m.padStart(2,"0")}`;
+      }
+      // DD/MM (default for Indian data)
+      return `${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`;
+    }
+    // Excel serial number as string
     const n = Number(s);
     if (!isNaN(n) && n > 40000 && n < 60000) {
-      const d = new Date(Date.UTC(1899,11,30) + n * 86400000);
-      return d.toISOString().split("T")[0];
+      const d = new Date(Date.UTC(1899, 11, 30) + n * 86400000);
+      return d.toISOString().slice(0, 10);
     }
     return null;
   }
@@ -4178,7 +4195,7 @@ function DataUploadScreen({ onLoad, onUseSample }) {
         supplier:    m.supplier || "",
         stock_qty:   normalizeNumber(m.stock_qty),
         stock_value: normalizeNumber(m.stock_value),
-        entry_date:  normalizeDate(m.entry_date),
+        entry_date:  normalizeDate(m.entry_date) || normalizeDate(m.stock_date) || null,
       };
     }).filter(r => r.product || r.stock_qty);
   }
@@ -4200,9 +4217,14 @@ function DataUploadScreen({ onLoad, onUseSample }) {
     const missing = ["product","stock_qty","stock_value"].filter(f => rows.every(r => !r[f] && r[f] !== 0));
     if (missing.length) return { error: `Stock file is missing required columns: ${missing.join(", ")}.`, warning: "" };
     const noEntry = rows.every(r => !r.entry_date);
+    const usingFallback = !noEntry && rows.some(r => r.entry_date && r.stock_date && r.entry_date === r.stock_date);
     return {
       error: "",
-      warning: noEntry ? "Entry dates missing — stock ageing will be unavailable." : "",
+      warning: noEntry
+        ? "Entry dates missing in stock file — stock ageing unavailable."
+        : usingFallback
+        ? "⚠ entry_date missing — using stock_date as fallback. Stock ageing may be less accurate. Add an entry_date column to your stock file for precise ageing."
+        : "",
     };
   }
 
